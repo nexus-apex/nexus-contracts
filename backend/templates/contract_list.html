@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Contracts | NexusContracts{% endblock %}
+{% block page_title %}Contracts{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search contracts...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Contract Type</option>
+      <option value="service" {% if status_filter == 'service' %}selected{% endif %}>Service</option>
+      <option value="employment" {% if status_filter == 'employment' %}selected{% endif %}>Employment</option>
+      <option value="nda" {% if status_filter == 'nda' %}selected{% endif %}>NDA</option>
+      <option value="lease" {% if status_filter == 'lease' %}selected{% endif %}>Lease</option>
+      <option value="vendor" {% if status_filter == 'vendor' %}selected{% endif %}>Vendor</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/contracts/create/" class="btn btn-primary">+ New Contract</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Title</th><th>Party</th><th>Contract Type</th><th>Value</th><th>Start Date</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/contracts/{{ r.pk }}/edit/"><strong>{{ r.title }}</strong></a></td>
+        <td>{{ r.party|default:"-" }}</td>
+        <td><span class="badge badge-blue">{{ r.get_contract_type_display }}</span></td>
+        <td>{{ r.value|floatformat:2 }}</td>
+        <td style="color:var(--muted)">{{ r.start_date|date:"M d, Y"|default:"-" }}</td>
+        <td class="actions">
+          <a href="/contracts/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/contracts/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No contracts found.</p>
+    <a href="/contracts/create/" class="btn btn-primary" style="margin-top:1rem">Create Contract</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
