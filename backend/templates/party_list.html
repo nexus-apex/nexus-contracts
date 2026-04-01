@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Parties | NexusContracts{% endblock %}
+{% block page_title %}Parties{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search parties...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Party Type</option>
+      <option value="client" {% if status_filter == 'client' %}selected{% endif %}>Client</option>
+      <option value="vendor" {% if status_filter == 'vendor' %}selected{% endif %}>Vendor</option>
+      <option value="partner" {% if status_filter == 'partner' %}selected{% endif %}>Partner</option>
+      <option value="employee" {% if status_filter == 'employee' %}selected{% endif %}>Employee</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/parties/create/" class="btn btn-primary">+ New Party</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Contact Person</th><th>Email</th><th>Phone</th><th>Party Type</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/parties/{{ r.pk }}/edit/"><strong>{{ r.name }}</strong></a></td>
+        <td>{{ r.contact_person|default:"-" }}</td>
+        <td style="color:var(--muted)">{{ r.email|default:"-" }}</td>
+        <td>{{ r.phone|default:"-" }}</td>
+        <td><span class="badge badge-blue">{{ r.get_party_type_display }}</span></td>
+        <td class="actions">
+          <a href="/parties/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/parties/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No parties found.</p>
+    <a href="/parties/create/" class="btn btn-primary" style="margin-top:1rem">Create Party</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
