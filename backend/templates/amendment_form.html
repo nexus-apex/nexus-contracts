@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit{% else %}New{% endif %} Amendment | NexusContracts{% endblock %}
+{% block page_title %}{% if editing %}Edit Amendment{% else %}New Amendment{% endif %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:750px">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group">
+        <label>Contract Title</label>
+        <input type="text" name="contract_title" value="{{ record.contract_title|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Amendment Type</label>
+        <select name="amendment_type">
+          <option value="extension" {% if record.amendment_type == 'extension' %}selected{% endif %}>Extension</option>
+          <option value="modification" {% if record.amendment_type == 'modification' %}selected{% endif %}>Modification</option>
+          <option value="termination" {% if record.amendment_type == 'termination' %}selected{% endif %}>Termination</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Effective Date</label>
+        <input type="date" name="effective_date" value="{{ record.effective_date|date:'Y-m-d'|default:'' }}">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea name="description">{{ record.description|default:'' }}</textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Status</label>
+        <select name="status">
+          <option value="proposed" {% if record.status == 'proposed' %}selected{% endif %}>Proposed</option>
+          <option value="approved" {% if record.status == 'approved' %}selected{% endif %}>Approved</option>
+          <option value="applied" {% if record.status == 'applied' %}selected{% endif %}>Applied</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;margin-top:1rem">
+      <button type="submit" class="btn btn-primary">{% if editing %}Update{% else %}Create{% endif %} Amendment</button>
+      <a href="/amendments/" class="btn" style="background:var(--border);color:var(--text)">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
