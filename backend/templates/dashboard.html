@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | NexusContracts{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Total Contracts</div>
+    <div class="stat-value">{{ contract_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Parties</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#10b981,#06b6d4);-webkit-background-clip:text;background-clip:text">{{ party_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Amendments</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#f59e0b,#f97316);-webkit-background-clip:text;background-clip:text">{{ amendment_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Value</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#ef4444,#ec4899);-webkit-background-clip:text;background-clip:text">{{ contract_total_value|floatformat:0 }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <h3>Recent Contracts</h3>
+    <a href="/contracts/create/" class="btn btn-primary btn-sm">+ New Contract</a>
+  </div>
+  {% if recent %}
+  <table>
+    <thead>
+      <tr><th>Title</th><th>Party</th><th>Contract Type</th><th>Value</th><th>Start Date</th><th>Created</th></tr>
+    </thead>
+    <tbody>
+      {% for r in recent %}
+      <tr>
+        <td><a href="/contracts/{{ r.pk }}/edit/">{{ r.title }}</a></td>
+        <td>{{ r.party|default:"-" }}</td><td><span class="badge badge-blue">{{ r.get_contract_type_display }}</span></td><td>{{ r.value|floatformat:2 }}</td><td style="color:var(--muted)">{{ r.start_date|date:"M d, Y"|default:"-" }}</td><td style="color:var(--muted)">{{ r.created_at|date:"M d, Y" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No records yet.</p>
+    <a href="/contracts/create/" class="btn btn-primary" style="margin-top:1rem">Create First Contract</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
